@@ -115,6 +115,7 @@ static int xc_crash_fork(int (*fn)(void *))
     else if(0 == dumper_pid)
     {
         //child process ...
+        XCD_LOG_DEBUG("child process ...");
         char msg = 'a';
         XCC_UTIL_TEMP_FAILURE_RETRY(write(xc_crash_child_notifier[1], &msg, sizeof(char)));
         syscall(SYS_close, xc_crash_child_notifier[0]);
@@ -124,6 +125,7 @@ static int xc_crash_fork(int (*fn)(void *))
     }
     else
     {
+        XCD_LOG_DEBUG("parent process ...");
         //parent process ...
         char msg;
         XCC_UTIL_TEMP_FAILURE_RETRY(read(xc_crash_child_notifier[0], &msg, sizeof(char)));
@@ -305,16 +307,22 @@ static void *xc_crash_callback_thread(void *arg)
     char      c_thread_name[16] = "\0";
     
     (void)arg;
-    
+
     JavaVMAttachArgs attach_args = {
         .version = XC_JNI_VERSION,
         .name    = "xcrash_crash_cb",
         .group   = NULL
     };
+    // 获取 JNIEnv 的实例需要把当前线程 Attach到JavaVM上去，
+    // 调用的方法是 JavaVM::AttachCurrentThread
     if(JNI_OK != (*xc_common_vm)->AttachCurrentThread(xc_common_vm, &env, &attach_args)) return NULL;
 
     //block until native crashed
     if(sizeof(data) != XCC_UTIL_TEMP_FAILURE_RETRY(read(xc_crash_cb_notifier, &data, sizeof(data)))) goto end;
+
+    XCD_LOG_DEBUG("xc_crash_log_pathname: %s", xc_crash_log_pathname);
+    XCD_LOG_DEBUG("xc_crash_emergency: %s", xc_crash_emergency);
+
 
     //prepare callback parameters
     if(NULL == (j_pathname = (*env)->NewStringUTF(env, xc_crash_log_pathname))) goto end;
@@ -329,6 +337,7 @@ static void *xc_crash_callback_thread(void *arg)
         if(!j_is_main_thread)
         {
             xcc_util_get_thread_name(xc_crash_tid, c_thread_name, sizeof(c_thread_name));
+            XCD_LOG_DEBUG("c_thread_name: %s", c_thread_name);
             if(NULL == (j_thread_name = (*env)->NewStringUTF(env, c_thread_name))) goto end;
         }
     }
@@ -492,6 +501,8 @@ static void xc_crash_signal_handler(int sig, siginfo_t *si, void *uc)
     }
 
     //parent process ...
+
+    XCD_LOG_DEBUG("wait the crash dumper process terminated");
 
     //wait the crash dumper process terminated
     errno = 0;
@@ -657,11 +668,13 @@ static void xc_crash_init_dump_all_threads_whitelist(const char **whitelist, siz
 static void xc_crash_init_callback(JNIEnv *env)
 {
     if(NULL == xc_common_cb_class) return;
-    
+
+    // NativeHandler#crashCallback，回调给 Java 层
     xc_crash_cb_method = (*env)->GetStaticMethodID(env, xc_common_cb_class, XC_CRASH_CALLBACK_METHOD_NAME, XC_CRASH_CALLBACK_METHOD_SIGNATURE);
     XC_JNI_CHECK_NULL_AND_PENDING_EXCEPTION(xc_crash_cb_method, err);
     
     //eventfd and a new thread for callback
+    // eventfd 用户进程间通信，触发事件通知；EFD_CLOEXEC 表示 fork子 进程时不继承
     if(0 > (xc_crash_cb_notifier = eventfd(0, EFD_CLOEXEC))) goto err;
     if(0 != pthread_create(&xc_crash_cb_thd, NULL, xc_crash_callback_thread, NULL)) goto err;
     return;
