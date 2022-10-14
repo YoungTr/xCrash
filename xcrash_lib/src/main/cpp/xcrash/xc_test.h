@@ -33,6 +33,8 @@ extern "C" {
 
 void xc_test_crash(int run_in_new_thread);
 
+void xc_test_backtrace(void);
+
 #ifdef __cplusplus
 }
 #endif

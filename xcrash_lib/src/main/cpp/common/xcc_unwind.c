@@ -25,6 +25,7 @@
 #include <sys/types.h>
 #include <ucontext.h>
 #include <android/log.h>
+#include <xcd_log.h>
 #include "xcc_unwind.h"
 #include "xcc_unwind_libcorkscrew.h"
 #include "xcc_unwind_libunwind.h"
@@ -32,17 +33,20 @@
 
 void xcc_unwind_init(int api_level)
 {
+    XCD_LOG_DEBUG("xcc_unwind_init");
 #if defined(__arm__) || defined(__i386__)
     if(api_level >= 16 && api_level <= 20)
     {
         // Android 5.0
         xcc_unwind_libcorkscrew_init();
+        XCD_LOG_DEBUG("xcc_unwind_init xcc_unwind_libcorkscrew_init");
     }
 #endif
     
     if(api_level >= 21 && api_level <= 23)
     {
         xcc_unwind_libunwind_init();
+        XCD_LOG_DEBUG("xcc_unwind_init xcc_unwind_libunwind_init");
     }
 }
 
@@ -53,6 +57,7 @@ size_t xcc_unwind_get(int api_level, siginfo_t *si, ucontext_t *uc, char *buf, s
 #if defined(__arm__) || defined(__i386__)
     if(api_level >= 16 && api_level <= 20)
     {
+        XCD_LOG_DEBUG("xcc_unwind_get xcc_unwind_libcorkscrew_record");
         if(0 == (buf_used = xcc_unwind_libcorkscrew_record(si, uc, buf, buf_len))) goto bottom;
         return buf_used;
     }
@@ -62,10 +67,12 @@ size_t xcc_unwind_get(int api_level, siginfo_t *si, ucontext_t *uc, char *buf, s
 
     if(api_level >= 21 && api_level <= 23)
     {
+        XCD_LOG_DEBUG("xcc_unwind_get xcc_unwind_libunwind_record");
         if(0 == (buf_used = xcc_unwind_libunwind_record(uc, buf, buf_len))) goto bottom;
         return buf_used;
     }
 
  bottom:
+    XCD_LOG_DEBUG("xcc_unwind_get xcc_unwind_clang_record");
     return xcc_unwind_clang_record(uc, buf, buf_len);
 }

@@ -231,6 +231,14 @@ static void xc_jni_test_crash(JNIEnv *env, jobject thiz, jint run_in_new_thread)
     xc_test_crash(run_in_new_thread);
 }
 
+static void xc_jni_test_backtrace(JNIEnv *env, jobject thiz)
+{
+    (void)env;
+    (void)thiz;
+
+    xc_test_backtrace();
+}
+
 static JNINativeMethod xc_jni_methods[] = {
     {
         "nativeInit",
@@ -283,6 +291,11 @@ static JNINativeMethod xc_jni_methods[] = {
         ")"
         "V",
         (void *)xc_jni_test_crash
+    },
+    {
+        "nativeTestBacktrace",
+        "()V",
+        (void *) xc_jni_test_backtrace
     }
 };
 

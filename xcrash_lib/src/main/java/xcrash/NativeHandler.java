@@ -315,4 +315,6 @@ class NativeHandler {
     private static native void nativeNotifyJavaCrashed();
 
     private static native void nativeTestCrash(int runInNewThread);
+
+    private static native void nativeTestBacktrace();
 }

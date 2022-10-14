@@ -39,6 +39,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/stat.h>
+#include <xcd_log.h>
 #include "xcc_errno.h"
 #include "xcc_util.h"
 #include "xcc_unwind.h"
@@ -193,6 +194,7 @@ static size_t xc_fallback_get_regs(char *buf, size_t len, ucontext_t *uc)
 static size_t xc_fallback_get_backtrace(char *buf, size_t len, siginfo_t *si, ucontext_t *uc)
 {
     size_t used = 0;
+    XCD_LOG_DEBUG("xc_fallback_get_backtrace backtrace");
 
     used += xcc_fmt_snprintf(buf + used, len - used, "backtrace:\n");
     used += xcc_unwind_get(xc_common_api_level, si, uc, buf + used, len - used);

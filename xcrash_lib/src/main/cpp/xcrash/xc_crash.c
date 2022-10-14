@@ -388,6 +388,7 @@ static int xc_crash_check_backtrace_valid()
     
     while(NULL != xcc_util_gets(line, sizeof(line), fd))
     {
+        XCD_LOG_DEBUG("xc_crash_check_backtrace_valid backtrace");
         if(0 == memcmp(line, "backtrace:\n", 11))
         {
             //check the next line

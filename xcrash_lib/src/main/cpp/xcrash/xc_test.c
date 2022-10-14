@@ -32,6 +32,7 @@
 #include "xc_test.h"
 #include "xc_common.h"
 #include "xc_dl.h"
+#include "xcd_process.h"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
@@ -125,5 +126,9 @@ void xc_test_crash(int run_in_new_thread)
     else
         xc_test_call_1();
 }
+
+void xc_test_backtrace() {
+}
+
 
 #pragma clang diagnostic pop

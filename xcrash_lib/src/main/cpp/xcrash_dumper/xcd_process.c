@@ -416,6 +416,7 @@ int xcd_process_record(xcd_process_t *self,
             if(0 != (r = xcd_process_record_signal_info(self, log_fd))) return r;
             if(0 != (r = xcd_process_record_abort_message(self, log_fd, api_level))) return r;
             if(0 != (r = xcd_thread_record_regs(&(thd->t), log_fd))) return r;
+            XCD_LOG_DEBUG("==crash thread backtrace==");
             if(0 == xcd_thread_load_frames(&(thd->t), self->maps))
             {
                 if(0 != (r = xcd_thread_record_backtrace(&(thd->t), log_fd))) return r;
@@ -460,6 +461,7 @@ int xcd_process_record(xcd_process_t *self,
             if(0 != (r = xcd_thread_record_regs(&(thd->t), log_fd))) goto end;
             if(0 == xcd_thread_load_frames(&(thd->t), self->maps))
             {
+                XCD_LOG_DEBUG("==not crash thread backtrace==");
                 if(0 != (r = xcd_thread_record_backtrace(&(thd->t), log_fd))) goto end;
                 if(0 != (r = xcd_thread_record_stack(&(thd->t), log_fd))) goto end;
             }

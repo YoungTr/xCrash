@@ -29,7 +29,7 @@ ext {
     targetSdkVersion = 31
     buildToolsVersion = '30.0.2'
     javaVersion = JavaVersion.VERSION_1_8
-    ndkVersion = "21.3.6528147"
+    ndkVersion = "21.4.7075529"
     cmakeVersion = "3.10.2"
     abiFilters = "armeabi-v7a,arm64-v8a,x86,x86_64"
     useASAN = false
