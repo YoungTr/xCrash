@@ -38,6 +38,7 @@
 #include "xc_common.h"
 #include "xc_jni.h"
 #include "xc_util.h"
+#include "xcd_log.h"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu-statement-expression"
@@ -233,9 +234,15 @@ static int xc_common_open_log(int is_crash, uint64_t timestamp,
     long               n, i;
     xcc_util_dirent_t *ent;
 
+
+
     xcc_fmt_snprintf(pathname, pathname_len, "%s/"XC_COMMON_LOG_PREFIX"_%020"PRIu64"_%s__%s%s",
                      xc_common_log_dir, timestamp, xc_common_app_version, xc_common_process_name,
                      is_crash ? XC_COMMON_LOG_SUFFIX_CRASH : XC_COMMON_LOG_SUFFIX_TRACE);
+
+    XCD_LOG_DEBUG("pathname: %s", pathname);
+    XCD_LOG_DEBUG("xc_common_log_dir: %s", xc_common_log_dir);
+
 
     //open dir
     if((fd = XCC_UTIL_TEMP_FAILURE_RETRY(open(xc_common_log_dir, XC_COMMON_OPEN_DIR_FLAGS))) < 0)

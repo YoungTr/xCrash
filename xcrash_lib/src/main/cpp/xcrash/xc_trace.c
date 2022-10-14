@@ -116,6 +116,7 @@ static void xc_trace_load_signal_catcher_tid()
         sigblk = 0;
         snprintf(buf, sizeof(buf), "/proc/%d/status", tid);
         if(NULL == (f = fopen(buf, "r"))) break;
+        // fgets 读取一行
         while(fgets(buf, sizeof(buf), f))
         {
             if(1 == sscanf(buf, "SigBlk: %"SCNx64, &sigblk)) break;
@@ -358,6 +359,7 @@ static void *xc_trace_dumper(void *arg)
         xc_trace_dump_status = XC_TRACE_DUMP_ON_GOING;
         if(sigsetjmp(jmpenv, 1) == 0) 
         {
+            XCD_LOG_DEBUG("dump trace");
             if(xc_trace_is_lollipop)
                 xc_trace_libart_dbg_suspend();
             xc_trace_libart_runtime_dump(*xc_trace_libart_runtime_instance, xc_trace_libcpp_cerr);

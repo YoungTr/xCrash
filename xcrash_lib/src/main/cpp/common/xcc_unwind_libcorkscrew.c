@@ -76,8 +76,10 @@ static t_free_backtrace_symbols        free_backtrace_symbols       = NULL;
 
 void xcc_unwind_libcorkscrew_init(void)
 {
+    // dlopen以指定模式打开指定的动态连接库文件，并返回一个句柄给调用进程
     if(NULL == (libcorkscrew = dlopen("libcorkscrew.so", RTLD_NOW))) return;
-    
+
+    // dlsym通过句柄和连接符名称获取函数名或者变量名
     if(NULL == (unwind_backtrace_signal_arch = (t_unwind_backtrace_signal_arch)dlsym(libcorkscrew, "unwind_backtrace_signal_arch"))) goto err;
     if(NULL == (acquire_my_map_info_list = (t_acquire_my_map_info_list)dlsym(libcorkscrew, "acquire_my_map_info_list"))) goto err;
     release_my_map_info_list = (t_release_my_map_info_list)dlsym(libcorkscrew, "release_my_map_info_list");

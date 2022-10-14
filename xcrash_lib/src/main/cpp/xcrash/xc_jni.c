@@ -147,6 +147,8 @@ static jint xc_jni_init(JNIEnv       *env,
             len = (size_t)(*env)->GetArrayLength(env, crash_dump_all_threads_whitelist);
             if(len > 0)
             {
+                // void *calloc(size_t nitems, size_t size) 分配所需的内存空间，并返回一个指向它的指针。
+                // malloc 和 calloc 之间的不同点是，malloc 不会设置内存为零，而 calloc 会设置分配的内存为零。
                 if(NULL != (c_crash_dump_all_threads_whitelist = calloc(len, sizeof(char *))))
                 {
                     c_crash_dump_all_threads_whitelist_len = len;

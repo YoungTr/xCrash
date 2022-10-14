@@ -226,6 +226,7 @@ static int xc_crash_exec_dumper(void *arg)
 
     //escape to the dumper process
     errno = 0;
+    XCD_LOG_DEBUG("dumper process dumper_pathname: %s", xc_crash_dumper_pathname);
     execl(xc_crash_dumper_pathname, XCC_UTIL_XCRASH_DUMPER_FILENAME, NULL);
     return 100 + errno;
 }
@@ -318,6 +319,8 @@ static void *xc_crash_callback_thread(void *arg)
     if(JNI_OK != (*xc_common_vm)->AttachCurrentThread(xc_common_vm, &env, &attach_args)) return NULL;
 
     //block until native crashed
+    // 初始化时 eventfd 没有数据，会阻塞当前线程
+    // 当发生 crash 时，eventfd 会发送通知，当前线程会被唤醒
     if(sizeof(data) != XCC_UTIL_TEMP_FAILURE_RETRY(read(xc_crash_cb_notifier, &data, sizeof(data)))) goto end;
 
     XCD_LOG_DEBUG("xc_crash_log_pathname: %s", xc_crash_log_pathname);
@@ -402,6 +405,8 @@ static int xc_crash_check_backtrace_valid()
 
 static void xc_crash_signal_handler(int sig, siginfo_t *si, void *uc)
 {
+
+    XCD_LOG_DEBUG("xcd_crash xc_crash_signal_handler");
     struct timespec crash_tp;
     int             restore_orig_ptracer = 0;
     int             restore_orig_dumpable = 0;
@@ -436,6 +441,8 @@ static void xc_crash_signal_handler(int sig, siginfo_t *si, void *uc)
     //save crash time
     clock_gettime(CLOCK_REALTIME, &crash_tp);
     xc_crash_time = (uint64_t)(crash_tp.tv_sec) * 1000 * 1000 + (uint64_t)crash_tp.tv_nsec / 1000;
+
+    XCD_LOG_DEBUG("crash time: %ju", xc_crash_time);
 
     //save crashed thread ID
     xc_crash_tid = gettid();
@@ -674,6 +681,7 @@ static void xc_crash_init_callback(JNIEnv *env)
     XC_JNI_CHECK_NULL_AND_PENDING_EXCEPTION(xc_crash_cb_method, err);
     
     //eventfd and a new thread for callback
+    // eventfd是一个用来通知事件的文件描述符
     // eventfd 用户进程间通信，触发事件通知；EFD_CLOEXEC 表示 fork子 进程时不继承
     if(0 > (xc_crash_cb_notifier = eventfd(0, EFD_CLOEXEC))) goto err;
     if(0 != pthread_create(&xc_crash_cb_thd, NULL, xc_crash_callback_thread, NULL)) goto err;
@@ -705,8 +713,12 @@ int xc_crash_init(JNIEnv *env,
     xc_crash_prepared_fd = XCC_UTIL_TEMP_FAILURE_RETRY(open("/dev/null", O_RDWR));
     xc_crash_rethrow = rethrow;
     if(NULL == (xc_crash_emergency = calloc(XC_CRASH_EMERGENCY_BUF_LEN, 1))) return XCC_ERRNO_NOMEM;
+    // 获取 nativeLibraryDir 下的 libxcrash_dumper.so
     if(NULL == (xc_crash_dumper_pathname = xc_util_strdupcat(xc_common_app_lib_dir, "/"XCC_UTIL_XCRASH_DUMPER_FILENAME))) return XCC_ERRNO_NOMEM;
+    XCD_LOG_DEBUG("xc_common_app_lib_dir: %s", xc_common_app_lib_dir);
+    XCD_LOG_DEBUG("xc_crash_dumper_pathname: %s", xc_crash_dumper_pathname);
 
+    XCD_LOG_DEBUG("xc_common_api_level: %d", xc_common_api_level);
     //init the local unwinder for fallback mode
     xcc_unwind_init(xc_common_api_level);
 

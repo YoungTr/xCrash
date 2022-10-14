@@ -95,6 +95,7 @@ void xc_util_get_kernel_version(char *buf, size_t len)
 {
     struct utsname uts;
 
+    // unanme:命令用于显示系统信息
     if(0 != uname(&uts))
     {
         strncpy(buf, "unknown", len);
@@ -102,5 +103,7 @@ void xc_util_get_kernel_version(char *buf, size_t len)
         return;
     }
 
+    // C 库函数 int snprintf(char *str, size_t size, const char *format, ...)
+    // 设将可变参数(...)按照 format 格式化成字符串，并将字符串复制到 str 中，size 为要写入的字符的最大数目，超过 size 会被截断。
     snprintf(buf, len, "%s version %s %s (%s)", uts.sysname, uts.release, uts.version, uts.machine);
 }

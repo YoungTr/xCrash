@@ -115,6 +115,7 @@ static int xcd_core_read_args()
 
 static void xcd_core_signal_handler(int sig, siginfo_t *si, void *uc)
 {
+    XCD_LOG_DEBUG("xcd_core xcd_core_signal_handler");
     char buf[2048] = "\0";
     size_t len;
 
@@ -149,6 +150,8 @@ int main(int argc, char** argv)
 {
     (void)argc;
     (void)argv;
+
+    XCD_LOG_DEBUG("XCD CORE MAIN");
     
     //don't leave a zombie process
     alarm(30);
@@ -161,6 +164,7 @@ int main(int argc, char** argv)
 
     //register signal handler for catching self-crashing
     xcc_unwind_init(xcd_core_spot.api_level);
+    XCD_LOG_DEBUG("xcd_core xcc_signal_crash_register");
     xcc_signal_crash_register(xcd_core_signal_handler);
 
     //create process object

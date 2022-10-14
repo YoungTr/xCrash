@@ -39,6 +39,7 @@ import java.util.regex.Pattern;
 import android.annotation.SuppressLint;
 import android.text.TextUtils;
 import android.os.Process;
+import android.util.Log;
 
 @SuppressLint("StaticFieldLeak")
 class JavaCrashHandler implements UncaughtExceptionHandler {
@@ -306,6 +307,9 @@ class JavaCrashHandler implements UncaughtExceptionHandler {
 
             //check regex for thread name
             if (whiteList != null && !matchThreadName(whiteList, thd.getName())) continue;
+
+            Log.d("XXCrash", "get thread info: " + thd.getName());
+
             thdMatchedRegex++;
 
             //check dump count limit

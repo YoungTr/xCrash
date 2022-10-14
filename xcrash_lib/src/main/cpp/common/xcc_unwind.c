@@ -35,6 +35,7 @@ void xcc_unwind_init(int api_level)
 #if defined(__arm__) || defined(__i386__)
     if(api_level >= 16 && api_level <= 20)
     {
+        // Android 5.0
         xcc_unwind_libcorkscrew_init();
     }
 #endif
