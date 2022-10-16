@@ -357,7 +357,7 @@ static void *xc_trace_dumper(void *arg)
         }
 
         xc_trace_dump_status = XC_TRACE_DUMP_ON_GOING;
-        if(sigsetjmp(jmpenv, 1) == 0) 
+        if(sigsetjmp(jmpenv, 1) == 0)
         {
             XCD_LOG_DEBUG("dump trace");
             if(xc_trace_is_lollipop)
@@ -405,6 +405,7 @@ static void *xc_trace_dumper(void *arg)
     (*xc_common_vm)->DetachCurrentThread(xc_common_vm);
 
  exit:
+    XCD_LOG_DEBUG("signal quit exit");
     xc_trace_notifier = -1;
     close(xc_trace_notifier);
     return NULL;
