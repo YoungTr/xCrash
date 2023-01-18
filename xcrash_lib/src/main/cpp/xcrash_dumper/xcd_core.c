@@ -109,7 +109,30 @@ static int xcd_core_read_args()
     if(0 != (r = xcd_core_read_stdin_extra(&xcd_core_app_version, xcd_core_spot.app_version_len))) return r;
     if(xcd_core_spot.dump_all_threads_whitelist_len > 0)
         if(0 != (r = xcd_core_read_stdin_extra(&xcd_core_dump_all_threads_whitelist, xcd_core_spot.dump_all_threads_whitelist_len))) return r;
-    
+
+    XCD_LOG_DEBUG("xcd_core_log_pathname: %s\n"
+                  "xcd_core_os_version: %s\n"
+                  "xcd_core_kernel_version: %s\n"
+                  "xcd_core_abi_list: %s\n"
+                  "xcd_core_manufacturer: %s\n"
+                  "xcd_core_brand: %s\n"
+                  "xcd_core_model: %s\n"
+                  "xcd_core_build_fingerprint: %s\n"
+                  "xcd_core_app_id: %s\n"
+                  "xcd_core_app_version: %s\n"
+                  "xcd_core_dump_all_threads_whitelist: %s",
+                  xcd_core_log_pathname,
+                  xcd_core_os_version,
+                  xcd_core_kernel_version,
+                  xcd_core_abi_list,
+                  xcd_core_manufacturer,
+                  xcd_core_brand,
+                  xcd_core_model,
+                  xcd_core_build_fingerprint,
+                  xcd_core_app_id,
+                  xcd_core_app_version,
+                  xcd_core_dump_all_threads_whitelist
+                  );
     return 0;
 }
 

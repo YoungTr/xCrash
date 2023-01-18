@@ -45,7 +45,7 @@ extern "C" {
 
 //debug-log flags for modules
 #define XCD_CORE_DEBUG          0
-#define XCD_THREAD_DEBUG        0
+#define XCD_THREAD_DEBUG        1
 #define XCD_ELF_DEBUG           0
 #define XCD_ELF_INTERFACE_DEBUG 0
 #define XCD_FRAMES_DEBUG        0

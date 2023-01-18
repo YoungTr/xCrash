@@ -139,6 +139,12 @@ static int xc_crash_fork(int (*fn)(void *))
 
 static int xc_crash_exec_dumper(void *arg)
 {
+    XCD_LOG_DEBUG("crash context-crash_tid: %d, crash_time: %llu, crash_pid: %d",
+                  xc_crash_spot.crash_tid,
+                  (unsigned long long) xc_crash_spot.crash_time,
+                  xc_crash_spot.crash_pid);
+    XCD_LOG_DEBUG("dumper process dumper_pathname: %s", xc_crash_dumper_pathname);
+
     (void)arg;
 
     //for fd exhaust
@@ -226,7 +232,6 @@ static int xc_crash_exec_dumper(void *arg)
 
     //escape to the dumper process
     errno = 0;
-    XCD_LOG_DEBUG("dumper process dumper_pathname: %s", xc_crash_dumper_pathname);
     execl(xc_crash_dumper_pathname, XCC_UTIL_XCRASH_DUMPER_FILENAME, NULL);
     return 100 + errno;
 }
@@ -388,7 +393,7 @@ static int xc_crash_check_backtrace_valid()
     
     while(NULL != xcc_util_gets(line, sizeof(line), fd))
     {
-        XCD_LOG_DEBUG("xc_crash_check_backtrace_valid backtrace");
+//        XCD_LOG_DEBUG("xc_crash_check_backtrace_valid backtrace");
         if(0 == memcmp(line, "backtrace:\n", 11))
         {
             //check the next line

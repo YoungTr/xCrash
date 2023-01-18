@@ -108,9 +108,17 @@ static void xcd_frames_load(xcd_frames_t *self)
         finished = 0;
         sigreturn = 0;
 
+        XCD_LOG_DEBUG("pc: %lx, sp: %lx",cur_pc, cur_sp);
+
+
         //get relative pc
         if(NULL != (map = xcd_maps_find_map(self->maps, cur_pc)))
         {
+            XCD_LOG_DEBUG("maps: %lx ~ %lx %s",map->start, map->end, map->name);
+            // rel_pc 减去基地址
+            // map: maps 中的行
+            // step_pc: pc 值
+            // maps: 所有map
             rel_pc = xcd_map_get_rel_pc(map, step_pc, self->pid, (void *)self->maps);
             step_pc = rel_pc;
 

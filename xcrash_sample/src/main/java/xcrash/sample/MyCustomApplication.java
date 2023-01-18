@@ -88,6 +88,8 @@ public class MyCustomApplication extends Application {
             .setJavaCallback(callback)
             .setNativeRethrow(true)
             .setNativeLogCountMax(10)
+            .setJavaDumpAllThreads(false)
+            .setNativeDumpAllThreads(false)
             .setNativeDumpAllThreadsWhiteList(new String[]{"^xcrash\\.sample$", "^Signal Catcher$", "^Jit thread pool$", ".*(R|r)ender.*", ".*Chrome.*"})
             .setNativeDumpAllThreadsCountMax(10)
             .setNativeCallback(callback)

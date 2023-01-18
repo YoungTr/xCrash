@@ -35,6 +35,7 @@
 #include "xcd_memory.h"
 #include "xcd_memory_file.h"
 #include "xcd_util.h"
+#include "xcd_log.h"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wpadded"
@@ -107,6 +108,7 @@ int xcd_memory_file_create(void **obj, xcd_memory_t *base, xcd_map_t *map, xcd_m
     //open file
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu-statement-expression"
+    XCD_LOG_DEBUG("open maps: %s", map->name);
     if(0 > ((*self)->fd = XCC_UTIL_TEMP_FAILURE_RETRY(open(map->name, O_RDONLY | O_CLOEXEC))))
     {
         r = XCC_ERRNO_SYS;
@@ -129,6 +131,7 @@ int xcd_memory_file_create(void **obj, xcd_memory_t *base, xcd_map_t *map, xcd_m
     //        d9bb6000-d9bb7000 r--p 00019000 fd:00 2666  /system/lib/libjavacrypto.so
     //        d9bb7000-d9bb8000 rw-p 0001a000 fd:00 2666  /system/lib/libjavacrypto.so
     //
+    XCD_LOG_DEBUG("open maps-offset: %zu", map->offset);
     if(0 == map->offset)
     {
         if(0 != (r = xcd_memory_file_init(*self, SIZE_MAX, 0, file_size))) goto err;
