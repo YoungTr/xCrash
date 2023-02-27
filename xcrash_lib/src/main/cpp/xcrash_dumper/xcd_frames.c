@@ -108,13 +108,13 @@ static void xcd_frames_load(xcd_frames_t *self)
         finished = 0;
         sigreturn = 0;
 
-        XCD_LOG_DEBUG("pc: %lx, sp: %lx",cur_pc, cur_sp);
+        XCD_LOG_DEBUG("pc: %x, sp: %x",cur_pc, cur_sp);
 
 
         //get relative pc
         if(NULL != (map = xcd_maps_find_map(self->maps, cur_pc)))
         {
-            XCD_LOG_DEBUG("maps: %lx ~ %lx %s",map->start, map->end, map->name);
+            XCD_LOG_DEBUG("maps: %x ~ %x %s",map->start, map->end, map->name);
             // rel_pc 减去基地址
             // map: maps 中的行
             // step_pc: pc 值

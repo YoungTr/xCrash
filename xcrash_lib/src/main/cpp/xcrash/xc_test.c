@@ -58,7 +58,7 @@ static void xc_test_set_abort_msg()
 
 int xc_test_call_4(int v)
 {
-    int *a = NULL;
+     int *a = NULL;
 
     xc_test_set_abort_msg();
     
